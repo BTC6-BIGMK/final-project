@@ -1,9 +1,9 @@
-import { HelloPage } from "./pages/HelloPage";
+import { TutorialPage } from "./pages/TutorialPage";
 
 function App() {
   return (
     <>
-      <HelloPage />
+      <TutorialPage />
     </>
   );
 }
