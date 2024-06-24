@@ -1,9 +1,14 @@
-import { HelloPage } from "./pages/HelloPage";
+import { TutorialPage } from "./pages/TutorialPage";
+import { SpotsMapPage } from "./pages/SpotsMapPage";
+import { Routes, Route } from "react-router-dom";
 
 function App() {
   return (
     <>
-      <HelloPage />
+      <Routes>
+        <Route path="/tutorial" element={<TutorialPage />} />
+        <Route path="/spots-map" element={<SpotsMapPage />} />
+      </Routes>
     </>
   );
 }
