@@ -1,7 +1,8 @@
+import { Map } from "../../components/Map";
 export const SpotsMapPage = () => {
   return (
     <>
-      <p>マップページ</p>
+      <Map />
     </>
   );
 };
