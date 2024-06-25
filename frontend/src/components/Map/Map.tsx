@@ -48,7 +48,7 @@ export const Map = () => {
   const getSuccess = async (pos: GeolocationPosition) => {
     setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
     const response = await axios.get(
-      `http://localhost:3000/api/area-spots?lat=${pos.coords.latitude}&lng=${pos.coords.longitude}&radius=400`,
+      `${import.meta.env.VITE_API_ENDPOINT}/api/area-spots?lat=${pos.coords.latitude}&lng=${pos.coords.longitude}&radius=400`,
     );
     setSpots(response.data);
   };
@@ -56,7 +56,6 @@ export const Map = () => {
   useLayoutEffect(() => {
     navigator.geolocation.getCurrentPosition(getSuccess);
   }, []);
-
   return (
     <MapContainer
       center={[position.lat, position.lng]}
