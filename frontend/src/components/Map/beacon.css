@@ -21,6 +21,17 @@
   animation-fill-mode: forwards;
   z-index: 0;
 }
+
+.spots-beacon {
+  background-color: red;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: block;
+  z-index: 1;
+  position: absolute;
+}
+
 @keyframes burst-animation {
   from {
     opacity: 1;

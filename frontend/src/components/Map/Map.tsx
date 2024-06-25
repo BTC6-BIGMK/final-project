@@ -12,6 +12,7 @@ import { useEffect, useState, useLayoutEffect } from "react";
 import "./beacon.css";
 
 const beacon = L.divIcon({ className: "beacon" });
+const spotsBeacon = L.divIcon({ className: "spots-beacon" });
 
 const CurrentLocation = ({
   position,
@@ -27,6 +28,23 @@ const CurrentLocation = ({
     <Marker position={position} icon={beacon} />
   ) : null;
 };
+
+const testSpots = [
+  {
+    spot_id: 1,
+    name: "常夜燈",
+    description: null,
+    lat: 35.06860432603339,
+    lng: 136.9672798123269,
+  },
+  {
+    spot_id: 2,
+    name: "鍾馗様",
+    description: null,
+    lat: 35.06657084927808,
+    lng: 136.9709867265857,
+  },
+];
 
 export const Map = () => {
   const [position, setPosition] = useState<{ lat: number; lng: number }>({
@@ -52,6 +70,10 @@ export const Map = () => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <CurrentLocation position={position} />
+      {testSpots.map((ele) => {
+        const position = { lat: ele.lat, lng: ele.lng };
+        return <Marker position={position} icon={spotsBeacon} />;
+      })}
     </MapContainer>
   );
 };
