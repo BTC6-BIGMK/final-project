@@ -4,7 +4,7 @@ import "dotenv/config";
 
 // Update with your config settings.
 
-const config: { [key: string]: Knex.Config } = {
+export const knexConfig: { [key: string]: Knex.Config } = {
 	development: {
 		client: "postgresql",
 		connection: {
@@ -40,5 +40,3 @@ const config: { [key: string]: Knex.Config } = {
 		seeds: { directory: "./db/seeds", extension: "ts" },
 	},
 };
-
-module.exports = config;
