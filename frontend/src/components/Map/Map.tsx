@@ -10,7 +10,6 @@ import L, { LatLngExpression } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState, useLayoutEffect } from "react";
 import "./beacon.css";
-import useSWR from "swr";
 import axios from "axios";
 
 const beacon = L.divIcon({ className: "beacon" });
@@ -30,23 +29,6 @@ const CurrentLocation = ({
     <Marker position={position} icon={beacon} />
   ) : null;
 };
-
-const testSpots = [
-  {
-    spot_id: 1,
-    name: "常夜燈",
-    description: null,
-    lat: 35.06860432603339,
-    lng: 136.9672798123269,
-  },
-  {
-    spot_id: 2,
-    name: "鍾馗様",
-    description: null,
-    lat: 35.06657084927808,
-    lng: 136.9709867265857,
-  },
-];
 
 interface Spot {
   spot_id: number;
@@ -69,7 +51,6 @@ export const Map = () => {
       `http://localhost:3000/api/area-spots?lat=${pos.coords.latitude}&lng=${pos.coords.longitude}&radius=400`,
     );
     setSpots(response.data);
-    console.log(response.data);
   };
 
   useLayoutEffect(() => {
@@ -91,14 +72,10 @@ export const Map = () => {
       {spots === undefined
         ? null
         : spots.map((ele) => {
-            const position: { lat: number; lng: number } = {
-              lat: ele.lat,
-              lng: ele.lng,
-            };
             return (
               <Marker
                 key={ele.spot_id}
-                position={position}
+                position={{ lat: ele.lat, lng: ele.lng }}
                 icon={spotsBeacon}
               />
             );
