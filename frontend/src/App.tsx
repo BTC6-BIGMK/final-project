@@ -5,10 +5,12 @@ import { Routes, Route } from "react-router-dom";
 function App() {
   return (
     <>
-      <Routes>
-        <Route path="/tutorial" element={<TutorialPage />} />
-        <Route path="/spots-map" element={<SpotsMapPage />} />
-      </Routes>
+      <div className="h-full bg-[url('/washi.jpeg')] z-50	">
+        <Routes>
+          <Route path="/tutorial" element={<TutorialPage />} />
+          <Route path="/spots-map" element={<SpotsMapPage />} />
+        </Routes>
+      </div>
     </>
   );
 }
