@@ -4,7 +4,7 @@ import { Link } from 'expo-router';
 
 export default function TutorialScreen() {
     return (
-        <View className="flex-1 items-center justify-center bg-white">
+        <View className="flex-1 items-center justify-center">
             <Link href="/spots-map" asChild>
                 <Pressable>
                     <Text>スタート</Text>
