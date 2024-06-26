@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="retro">
   <head>
     <meta charset="UTF-8" />
@@ -9,5 +9,15 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      Notification.requestPermission();
+
+      navigator.serviceWorker
+        .register(`/service-worker.js`, {
+          scope: "../",
+        })
+        .then((reg) => console.log("サービスワーカーの登録成功", reg.scope))
+        .catch((err) => console.log("サービスワーカーの登録失敗", err));
+    </script>
   </body>
 </html>
