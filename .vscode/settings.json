@@ -1,5 +1,5 @@
 {
-  "eslint.workingDirectories": ["backend", "frontend"],
+  "eslint.workingDirectories": ["backend", "frontend", "app"],
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "files.autoSave": "onFocusChange"
