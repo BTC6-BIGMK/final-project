@@ -37,17 +37,14 @@ export default function SpotsMapScreen() {
 
       if (fStatus !== "granted") {
         // TODO: 'Permission to access location was denied'
-        console.log("forground");
-
         return;
       }
 
       const { status: bStatus } =
-        await Location.getBackgroundPermissionsAsync();
+        await Location.requestBackgroundPermissionsAsync();
       console.log(bStatus);
       if (bStatus !== "granted") {
         // TODO: 'Permission to access location was denied'
-        console.log("background");
         return;
       }
 

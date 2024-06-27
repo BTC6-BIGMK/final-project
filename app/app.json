@@ -14,9 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "infoPlist": {
-        "UIBackgroundModes": ["location"]
-      }
+      "UIBackgroundModes": ["location"]
     },
     "android": {
       "adaptiveIcon": {
@@ -34,7 +32,8 @@
       [
         "expo-location",
         {
-          "locationAlwaysPermission": "Allow app to use your location."
+          "locationAlwaysPermission": "Allow app to use your location.",
+          "isIosBackgroundLocationEnabled": true
         }
       ]
     ],
