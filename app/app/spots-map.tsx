@@ -18,6 +18,7 @@ TaskManager.defineTask("GEOFENCE_TASK", ({ data, error }: any) => {
     return;
   }
   if (data.eventType === GeofencingEventType.Enter) {
+    // TODO: ジオフェンスに入った時の処理を追加
     console.log("You've entered region:", data.region);
   } else if (data.eventType === GeofencingEventType.Exit) {
     console.log("You've left region:", data.region);
@@ -63,9 +64,10 @@ export default function SpotsMapScreen() {
       await Location.startGeofencingAsync(
         "GEOFENCE_TASK",
         spotData.map((spot) => ({
+          identifier: `${spot.spot_id}`,
           latitude: spot.lat,
           longitude: spot.lng,
-          radius: 20,
+          radius: 10,
         }))
       );
     })();
