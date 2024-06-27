@@ -5,6 +5,7 @@ import * as Location from "expo-location";
 import axios from "axios";
 import { GeofencingEventType } from "expo-location";
 import * as TaskManager from "expo-task-manager";
+import * as Notifications from "expo-notifications";
 
 interface Spot {
   spot_id: number;
@@ -12,6 +13,28 @@ interface Spot {
   lat: number;
   lng: number;
 }
+
+const scheduleNotificationAsync = async (spotName: string) => {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "近くにおすすめスポットがあります",
+      body: spotName,
+      sound: "default",
+    },
+    trigger: {
+      seconds: 1,
+    },
+  });
+};
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
 TaskManager.defineTask("GEOFENCE_TASK", ({ data, error }: any) => {
   if (error) {
     // check `error.message` for more details.
@@ -19,9 +42,8 @@ TaskManager.defineTask("GEOFENCE_TASK", ({ data, error }: any) => {
   }
   if (data.eventType === GeofencingEventType.Enter) {
     // TODO: ジオフェンスに入った時の処理を追加
+    scheduleNotificationAsync(data.region.identifier);
     console.log("You've entered region:", data.region);
-  } else if (data.eventType === GeofencingEventType.Exit) {
-    console.log("You've left region:", data.region);
   }
 });
 
@@ -64,7 +86,7 @@ export default function SpotsMapScreen() {
       await Location.startGeofencingAsync(
         "GEOFENCE_TASK",
         spotData.map((spot) => ({
-          identifier: `${spot.spot_id}`,
+          identifier: spot.name,
           latitude: spot.lat,
           longitude: spot.lng,
           radius: 10,

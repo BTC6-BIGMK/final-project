@@ -5,28 +5,6 @@ import React from "react";
 import { StyleSheet, View, Button } from "react-native";
 import * as Notifications from "expo-notifications";
 
-const scheduleNotificationAsync = async () => {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "test title",
-      subtitle: "spot-name",
-      body: "test",
-      sound: "default",
-    },
-    trigger: {
-      seconds: 10,
-    },
-  });
-};
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
-
 const requestPermissionsAsync = async () => {
   const { granted } = await Notifications.getPermissionsAsync();
   if (granted) {
@@ -35,16 +13,6 @@ const requestPermissionsAsync = async () => {
 
   await Notifications.requestPermissionsAsync();
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column",
-  },
-});
 
 export default function RootLayout() {
   React.useEffect(() => {
@@ -58,12 +26,6 @@ export default function RootLayout() {
       >
         <Slot />
       </ImageBackground>
-      <View style={styles.container}>
-        <Button
-          title="3秒後にプッシュ通知する"
-          onPress={scheduleNotificationAsync}
-        />
-      </View>
     </>
   );
 }
