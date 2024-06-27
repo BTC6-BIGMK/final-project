@@ -3,6 +3,8 @@ import MapView, { Callout, Marker, UrlTile } from "react-native-maps";
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import axios from "axios";
+import { GeofencingEventType } from "expo-location";
+import * as TaskManager from "expo-task-manager";
 
 interface Spot {
   spot_id: number;
@@ -10,6 +12,17 @@ interface Spot {
   lat: number;
   lng: number;
 }
+TaskManager.defineTask("GEOFENCE_TASK", ({ data, error }: any) => {
+  if (error) {
+    // check `error.message` for more details.
+    return;
+  }
+  if (data.eventType === GeofencingEventType.Enter) {
+    console.log("You've entered region:", data.region);
+  } else if (data.eventType === GeofencingEventType.Exit) {
+    console.log("You've left region:", data.region);
+  }
+});
 
 export default function SpotsMapScreen() {
   const [spots, setSpots] = useState<Spot[]>();
@@ -19,10 +32,22 @@ export default function SpotsMapScreen() {
   }>();
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
+      const { status: fStatus } =
+        await Location.requestForegroundPermissionsAsync();
 
-      if (status !== "granted") {
+      if (fStatus !== "granted") {
         // TODO: 'Permission to access location was denied'
+        console.log("forground");
+
+        return;
+      }
+
+      const { status: bStatus } =
+        await Location.getBackgroundPermissionsAsync();
+      console.log(bStatus);
+      if (bStatus !== "granted") {
+        // TODO: 'Permission to access location was denied'
+        console.log("background");
         return;
       }
 
@@ -36,8 +61,16 @@ export default function SpotsMapScreen() {
       const response = await axios.get(
         `http://localhost:3000/api/area-spots?lat=${location.coords.latitude}&lng=${location.coords.longitude}&radius=500`
       );
-      console.log(response.data);
-      setSpots(response.data);
+      const spotData = response.data as Spot[];
+      setSpots(spotData);
+      await Location.startGeofencingAsync(
+        "GEOFENCE_TASK",
+        spotData.map((spot) => ({
+          latitude: spot.lat,
+          longitude: spot.lng,
+          radius: 20,
+        }))
+      );
     })();
   }, []);
   const { height, width } = Dimensions.get("window");
@@ -52,8 +85,8 @@ export default function SpotsMapScreen() {
           showsUserLocation={true}
           followsUserLocation={true}
           initialRegion={{
-            latitude: initialLocation!.lat,
-            longitude: initialLocation!.lng,
+            latitude: initialLocation!!.lat,
+            longitude: initialLocation!!.lng,
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
           }}
