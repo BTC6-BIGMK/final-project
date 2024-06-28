@@ -56,8 +56,6 @@ TaskManager.defineTask("GEOFENCE_TASK", ({ data, error }: any) => {
     // TODO: ジオフェンスに入った時の処理を追加
     scheduleNotificationAsync(data.region);
     console.log("You've entered region:", data.region);
-    console.log("all : ", data);
-    console.log("id:", data.region.id);
   }
 });
 
