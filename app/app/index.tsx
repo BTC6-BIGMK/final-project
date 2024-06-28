@@ -11,13 +11,6 @@ export default function TutorialScreen() {
           <Text>スタート</Text>
         </Pressable>
       </Link>
-      <Pressable
-        onPress={() => {
-          router.push("/spots-map");
-        }}
-      >
-        <Text>test</Text>
-      </Pressable>
     </View>
   );
 }
