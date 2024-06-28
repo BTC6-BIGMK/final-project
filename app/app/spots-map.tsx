@@ -1,6 +1,6 @@
 import { Pressable, Text, View, Dimensions } from "react-native";
 import MapView, { Callout, Marker, UrlTile } from "react-native-maps";
-import { useEffect, useState } from "react";
+import { useEffect, useState, createRef } from "react";
 import * as Location from "expo-location";
 import axios from "axios";
 import { GeofencingEventType } from "expo-location";
@@ -14,11 +14,23 @@ interface Spot {
   lng: number;
 }
 
-const scheduleNotificationAsync = async (spotName: string) => {
+const scheduleNotificationAsync = async (spot: {
+  id: number;
+  identifier: string;
+  latitude: number;
+  longitude: number;
+  radius: number;
+}) => {
   await Notifications.scheduleNotificationAsync({
     content: {
       title: "近くにおすすめスポットがあります",
-      body: spotName,
+      body: spot.identifier.split(",")[1],
+      data: {
+        id: spot.id,
+        name: spot.identifier,
+        lat: spot.latitude,
+        lng: spot.longitude,
+      },
       sound: "default",
     },
     trigger: {
@@ -42,8 +54,10 @@ TaskManager.defineTask("GEOFENCE_TASK", ({ data, error }: any) => {
   }
   if (data.eventType === GeofencingEventType.Enter) {
     // TODO: ジオフェンスに入った時の処理を追加
-    scheduleNotificationAsync(data.region.identifier);
+    scheduleNotificationAsync(data.region);
     console.log("You've entered region:", data.region);
+    console.log("all : ", data);
+    console.log("id:", data.region.id);
   }
 });
 
@@ -53,6 +67,7 @@ export default function SpotsMapScreen() {
     lat: number;
     lng: number;
   }>();
+
   useEffect(() => {
     (async () => {
       const { status: fStatus } =
@@ -86,7 +101,7 @@ export default function SpotsMapScreen() {
       await Location.startGeofencingAsync(
         "GEOFENCE_TASK",
         spotData.map((spot) => ({
-          identifier: spot.name,
+          identifier: `${spot.spot_id},${spot.name}`,
           latitude: spot.lat,
           longitude: spot.lng,
           radius: 10,
