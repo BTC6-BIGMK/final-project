@@ -14,6 +14,7 @@ interface Response {
   bearingToTarget: number | null;
   bearingDifference: number | null;
   deviceOrientation: string;
+  location: Location.LocationObject | null;
 }
 
 export const useAR = (
@@ -188,5 +189,6 @@ export const useAR = (
     bearingToTarget,
     bearingDifference,
     deviceOrientation,
+    location,
   };
 };

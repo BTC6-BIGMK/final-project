@@ -21,6 +21,7 @@ export default function NativeWindAROverlay() {
     bearingToTarget,
     bearingDifference,
     deviceOrientation,
+    location,
   } = useAR(THRESHOLD_DISTANCE, TARGET_LOCATION);
 
   if (hasPermission === null) {
@@ -57,8 +58,8 @@ export default function NativeWindAROverlay() {
           <MapView
             showsUserLocation={true}
             initialRegion={{
-              latitude: TARGET_LOCATION.latitude,
-              longitude: TARGET_LOCATION.longitude,
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
               latitudeDelta: 0.01,
               longitudeDelta: 0.01,
             }}
