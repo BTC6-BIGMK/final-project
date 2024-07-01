@@ -15,7 +15,7 @@ const TARGET_LOCATION = {
 
 const { width, height } = Dimensions.get("window");
 
-export default function DebugEnhancedAROverlay() {
+export default function OrientationAwareAROverlay() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null
@@ -27,6 +27,7 @@ export default function DebugEnhancedAROverlay() {
   const [bearingDifference, setBearingDifference] = useState<number | null>(
     null
   );
+  const [deviceOrientation, setDeviceOrientation] = useState<string>("unknown");
 
   const updateOverlayVisibility = useCallback(
     (loc: Location.LocationObject | null, hdg: number | null) => {
@@ -41,7 +42,7 @@ export default function DebugEnhancedAROverlay() {
         setShowOverlay(false);
       }
     },
-    [distance, bearingToTarget]
+    [distance, bearingToTarget, deviceOrientation]
   );
 
   useEffect(() => {
@@ -66,8 +67,12 @@ export default function DebugEnhancedAROverlay() {
 
         DeviceMotion.setUpdateInterval(100);
         DeviceMotion.addListener((motion) => {
-          if (motion.rotation) {
-            const newHeading = getHeadingFromRotation(motion.rotation);
+          const { rotation } = motion;
+          if (rotation) {
+            const { beta, gamma } = rotation;
+            const newOrientation = getDeviceOrientation(beta, gamma);
+            setDeviceOrientation(newOrientation);
+            const newHeading = getHeadingFromRotation(rotation, newOrientation);
             setHeading(newHeading);
             updateOverlayVisibility(location, newHeading);
           }
@@ -148,20 +153,29 @@ export default function DebugEnhancedAROverlay() {
     return diff > 180 ? 360 - diff : diff;
   };
 
-  const getHeadingFromRotation = (rotation: any) => {
+  const getDeviceOrientation = (beta: number, gamma: number) => {
+    if (Math.abs(beta) < 10 && Math.abs(gamma) < 10) {
+      return "flat";
+    } else if (Math.abs(gamma) < 10) {
+      return "portrait";
+    } else {
+      return "landscape";
+    }
+  };
+
+  const getHeadingFromRotation = (rotation: any, orientation: string) => {
     const { alpha, beta, gamma } = rotation;
 
-    // デバイスが垂直（portrait）の場合
-    if (Math.abs(beta) < Math.PI / 4) {
-      return (alpha * 180) / Math.PI;
+    switch (orientation) {
+      case "flat":
+        return (alpha * 180) / Math.PI;
+      case "portrait":
+        return ((Math.atan2(gamma, -beta) * 180) / Math.PI + 360) % 360;
+      case "landscape":
+        return ((Math.atan2(-beta, gamma) * 180) / Math.PI + 360) % 360;
+      default:
+        return 0;
     }
-
-    // デバイスが水平（landscape）の場合
-    let heading = (Math.atan2(-gamma, beta) * 180) / Math.PI + 90;
-    if (heading < 0) {
-      heading += 360;
-    }
-    return heading;
   };
 
   if (hasPermission === null) {
@@ -224,6 +238,7 @@ export default function DebugEnhancedAROverlay() {
             ? `${bearingDifference.toFixed(2)}°`
             : "計算中..."}
         </Text>
+        <Text>デバイスの向き: {deviceOrientation}</Text>
         <Text>
           表示条件:{" "}
           {distance !== null && distance <= THRESHOLD_DISTANCE
