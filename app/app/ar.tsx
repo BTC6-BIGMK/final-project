@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Image, Text } from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import { View, StyleSheet, Image, Text, Dimensions } from "react-native";
 import { Camera, CameraView } from "expo-camera";
 import * as Location from "expo-location";
 import { DeviceMotion } from "expo-sensors";
+import MapView, { Marker } from "react-native-maps";
 
-const THRESHOLD_DISTANCE = 100; // メートル単位
+const THRESHOLD_DISTANCE = 1000; // メートル単位
 const CAMERA_FOV = 60; // カメラの視野角（度）
+const BEARING_THRESHOLD = 20; // 方位角の許容誤差（度）
 const TARGET_LOCATION = {
-  latitude: 35.11962307663533,
-  longitude: 137.0382500832495,
+  latitude: 35.1193147320576,
+  longitude: 137.0384692843589,
 };
 
-export default function LocationBasedCameraOverlay() {
+const { width, height } = Dimensions.get("window");
+
+export default function DebugEnhancedAROverlay() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null
@@ -20,6 +24,25 @@ export default function LocationBasedCameraOverlay() {
   const [showOverlay, setShowOverlay] = useState<boolean>(false);
   const [distance, setDistance] = useState<number | null>(null);
   const [bearingToTarget, setBearingToTarget] = useState<number | null>(null);
+  const [bearingDifference, setBearingDifference] = useState<number | null>(
+    null
+  );
+
+  const updateOverlayVisibility = useCallback(
+    (loc: Location.LocationObject | null, hdg: number | null) => {
+      if (loc && hdg !== null && bearingToTarget !== null) {
+        const isInDistance =
+          distance !== null && distance <= THRESHOLD_DISTANCE;
+        const diff = calculateBearingDifference(hdg, bearingToTarget);
+        setBearingDifference(diff);
+        const isInView = diff <= CAMERA_FOV / 2 + BEARING_THRESHOLD;
+        setShowOverlay(isInDistance && isInView);
+      } else {
+        setShowOverlay(false);
+      }
+    },
+    [distance, bearingToTarget]
+  );
 
   useEffect(() => {
     (async () => {
@@ -34,13 +57,14 @@ export default function LocationBasedCameraOverlay() {
       if (locationStatus === "granted") {
         Location.watchPositionAsync(
           {
-            accuracy: Location.Accuracy.High,
+            accuracy: Location.Accuracy.BestForNavigation,
             timeInterval: 1000,
             distanceInterval: 1,
           },
           updateLocationAndOverlay
         );
 
+        DeviceMotion.setUpdateInterval(100);
         DeviceMotion.addListener((motion) => {
           if (motion.rotation) {
             const newHeading = getHeadingFromRotation(motion.rotation);
@@ -54,42 +78,30 @@ export default function LocationBasedCameraOverlay() {
     return () => {
       DeviceMotion.removeAllListeners();
     };
-  }, []);
+  }, [updateOverlayVisibility]);
 
-  const updateLocationAndOverlay = (newLocation: Location.LocationObject) => {
-    setLocation(newLocation);
-    const calculatedDistance = calculateDistance(
-      newLocation.coords.latitude,
-      newLocation.coords.longitude,
-      TARGET_LOCATION.latitude,
-      TARGET_LOCATION.longitude
-    );
-    setDistance(calculatedDistance);
-    const bearing = calculateBearing(
-      newLocation.coords.latitude,
-      newLocation.coords.longitude,
-      TARGET_LOCATION.latitude,
-      TARGET_LOCATION.longitude
-    );
-    setBearingToTarget(bearing);
-    updateOverlayVisibility(newLocation, heading);
-  };
-
-  const updateOverlayVisibility = (
-    loc: Location.LocationObject | null,
-    hdg: number | null
-  ) => {
-    if (loc && hdg !== null && bearingToTarget !== null) {
-      const isInDistance = distance !== null && distance <= THRESHOLD_DISTANCE;
-      const bearingDifference = Math.abs(hdg - bearingToTarget);
-      const isInView =
-        bearingDifference <= CAMERA_FOV / 2 ||
-        bearingDifference >= 360 - CAMERA_FOV / 2;
-      setShowOverlay(isInDistance && isInView);
-    } else {
-      setShowOverlay(false);
-    }
-  };
+  const updateLocationAndOverlay = useCallback(
+    (newLocation: Location.LocationObject) => {
+      setLocation(newLocation);
+      const calculatedDistance = calculateDistance(
+        newLocation.coords.latitude,
+        newLocation.coords.longitude,
+        TARGET_LOCATION.latitude,
+        TARGET_LOCATION.longitude
+      );
+      setDistance(calculatedDistance);
+      const bearing = calculateBearing(
+        newLocation.coords.latitude,
+        newLocation.coords.longitude,
+        TARGET_LOCATION.latitude,
+        TARGET_LOCATION.longitude
+      );
+      console.log("Calculated bearing:", bearing);
+      setBearingToTarget(bearing);
+      updateOverlayVisibility(newLocation, heading);
+    },
+    [heading, updateOverlayVisibility]
+  );
 
   const calculateDistance = (
     lat1: number,
@@ -131,9 +143,21 @@ export default function LocationBasedCameraOverlay() {
     return bearing % 360;
   };
 
+  const calculateBearingDifference = (heading: number, bearing: number) => {
+    let diff = Math.abs(heading - bearing);
+    return diff > 180 ? 360 - diff : diff;
+  };
+
   const getHeadingFromRotation = (rotation: any) => {
     const { alpha, beta, gamma } = rotation;
-    let heading = Math.atan2(beta!, alpha!) * (180 / Math.PI);
+
+    // デバイスが垂直（portrait）の場合
+    if (Math.abs(beta) < Math.PI / 4) {
+      return (alpha * 180) / Math.PI;
+    }
+
+    // デバイスが水平（landscape）の場合
+    let heading = (Math.atan2(-gamma, beta) * 180) / Math.PI + 90;
     if (heading < 0) {
       heading += 360;
     }
@@ -141,7 +165,11 @@ export default function LocationBasedCameraOverlay() {
   };
 
   if (hasPermission === null) {
-    return <View />;
+    return (
+      <View>
+        <Text>Requesting permissions...</Text>
+      </View>
+    );
   }
   if (hasPermission === false) {
     return (
@@ -153,39 +181,61 @@ export default function LocationBasedCameraOverlay() {
 
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera}>
-        {showOverlay && (
-          <Image
-            source={require("@/assets/images/arimatsu.jpeg")}
-            style={styles.overlay}
-          />
+      <View style={styles.cameraContainer}>
+        <CameraView style={styles.camera}>
+          {showOverlay && (
+            <Image
+              source={require("@/assets/images/arimatsu.jpeg")}
+              style={styles.overlay}
+            />
+          )}
+        </CameraView>
+      </View>
+      <View style={styles.mapContainer}>
+        {location && (
+          <MapView
+            style={styles.map}
+            showsUserLocation={true}
+            initialRegion={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            }}
+          >
+            <Marker
+              coordinate={TARGET_LOCATION}
+              title="目標地点"
+              pinColor="red"
+            />
+          </MapView>
         )}
-      </CameraView>
+      </View>
       <View style={styles.debugContainer}>
+        <Text>距離: {distance ? `${distance.toFixed(2)}m` : "計算中..."}</Text>
+        <Text>方角: {heading ? `${heading.toFixed(2)}°` : "不明"}</Text>
         <Text>
-          Target Location: {TARGET_LOCATION.latitude.toFixed(4)},{" "}
-          {TARGET_LOCATION.longitude.toFixed(4)}
+          目標への方位:{" "}
+          {bearingToTarget ? `${bearingToTarget.toFixed(2)}°` : "計算中..."}
         </Text>
         <Text>
-          Current Location:{" "}
-          {location
-            ? `${location.coords.latitude.toFixed(4)}, ${location.coords.longitude.toFixed(4)}`
-            : "Unknown"}
+          方位差:{" "}
+          {bearingDifference !== null
+            ? `${bearingDifference.toFixed(2)}°`
+            : "計算中..."}
         </Text>
         <Text>
-          Distance to target:{" "}
-          {distance ? `${distance.toFixed(2)} meters` : "Calculating..."}
+          表示条件:{" "}
+          {distance !== null && distance <= THRESHOLD_DISTANCE
+            ? "距離OK"
+            : "距離NG"}
+          ,{" "}
+          {bearingDifference !== null &&
+          bearingDifference <= CAMERA_FOV / 2 + BEARING_THRESHOLD
+            ? "方位OK"
+            : "方位NG"}
         </Text>
-        <Text>
-          Current Heading: {heading ? `${heading.toFixed(2)}°` : "Unknown"}
-        </Text>
-        <Text>
-          Bearing to Target:{" "}
-          {bearingToTarget
-            ? `${bearingToTarget.toFixed(2)}°`
-            : "Calculating..."}
-        </Text>
-        <Text>Overlay Visible: {showOverlay ? "Yes" : "No"}</Text>
+        <Text>表示: {showOverlay ? "表示中" : "非表示"}</Text>
       </View>
     </View>
   );
@@ -195,8 +245,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  cameraContainer: {
+    flex: 1,
+  },
   camera: {
     flex: 1,
+  },
+  mapContainer: {
+    flex: 1,
+  },
+  map: {
+    width: "100%",
+    height: "100%",
   },
   overlay: {
     position: "absolute",
@@ -208,7 +268,7 @@ const styles = StyleSheet.create({
   },
   debugContainer: {
     position: "absolute",
-    bottom: 0,
+    top: 0,
     left: 0,
     right: 0,
     padding: 10,
