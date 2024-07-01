@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, Image, Text, Dimensions } from "react-native";
+import { View, Image, Text, Dimensions } from "react-native";
 import { Camera, CameraView } from "expo-camera";
 import * as Location from "expo-location";
 import { DeviceMotion } from "expo-sensors";
@@ -15,7 +15,7 @@ const TARGET_LOCATION = {
 
 const { width, height } = Dimensions.get("window");
 
-export default function OrientationAwareAROverlay() {
+export default function NativeWindAROverlay() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null
@@ -101,7 +101,6 @@ export default function OrientationAwareAROverlay() {
         TARGET_LOCATION.latitude,
         TARGET_LOCATION.longitude
       );
-      console.log("Calculated bearing:", bearing);
       setBearingToTarget(bearing);
       updateOverlayVisibility(newLocation, heading);
     },
@@ -180,35 +179,35 @@ export default function OrientationAwareAROverlay() {
 
   if (hasPermission === null) {
     return (
-      <View>
+      <View className="flex-1 justify-center items-center">
         <Text>Requesting permissions...</Text>
       </View>
     );
   }
   if (hasPermission === false) {
     return (
-      <View>
+      <View className="flex-1 justify-center items-center">
         <Text>No access to camera or location</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.cameraContainer}>
-        <CameraView style={styles.camera}>
+    <View className="flex-1">
+      <View className="flex-1">
+        <CameraView className="flex-1">
           {showOverlay && (
             <Image
               source={require("@/assets/images/arimatsu.jpeg")}
-              style={styles.overlay}
+              className="absolute top-1/2 left-1/2 w-25 h-25 -translate-x-1/2 -translate-y-1/2"
             />
           )}
         </CameraView>
       </View>
-      <View style={styles.mapContainer}>
+      <View className="flex-1">
         {location && (
           <MapView
-            style={styles.map}
+            className="w-full h-full"
             showsUserLocation={true}
             initialRegion={{
               latitude: location.coords.latitude,
@@ -225,7 +224,7 @@ export default function OrientationAwareAROverlay() {
           </MapView>
         )}
       </View>
-      <View style={styles.debugContainer}>
+      <View className="absolute top-0 left-0 right-0 p-2.5 bg-white bg-opacity-70">
         <Text>距離: {distance ? `${distance.toFixed(2)}m` : "計算中..."}</Text>
         <Text>方角: {heading ? `${heading.toFixed(2)}°` : "不明"}</Text>
         <Text>
@@ -244,7 +243,7 @@ export default function OrientationAwareAROverlay() {
           {distance !== null && distance <= THRESHOLD_DISTANCE
             ? "距離OK"
             : "距離NG"}
-          ,{" "}
+          ,
           {bearingDifference !== null &&
           bearingDifference <= CAMERA_FOV / 2 + BEARING_THRESHOLD
             ? "方位OK"
@@ -255,38 +254,3 @@ export default function OrientationAwareAROverlay() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  cameraContainer: {
-    flex: 1,
-  },
-  camera: {
-    flex: 1,
-  },
-  mapContainer: {
-    flex: 1,
-  },
-  map: {
-    width: "100%",
-    height: "100%",
-  },
-  overlay: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    width: 100,
-    height: 100,
-    transform: [{ translateX: -50 }, { translateY: -50 }],
-  },
-  debugContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    padding: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
-  },
-});
