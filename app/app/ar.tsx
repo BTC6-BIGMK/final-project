@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Image, Text, Dimensions } from "react-native";
+import { View, Image, Text, Dimensions, StyleSheet } from "react-native";
 import { Camera, CameraView } from "expo-camera";
 import * as Location from "expo-location";
 import { DeviceMotion } from "expo-sensors";
@@ -193,21 +193,22 @@ export default function NativeWindAROverlay() {
   }
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 relative">
       <View className="flex-1">
         <CameraView className="flex-1">
           {showOverlay && (
-            <Image
-              source={require("@/assets/images/arimatsu.jpeg")}
-              className="absolute top-1/2 left-1/2 w-25 h-25 -translate-x-1/2 -translate-y-1/2"
-            />
+            <View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center	">
+              <Image
+                source={require("@/assets/images/arimatsu.jpeg")}
+                className="w-[80%] object-contain"
+              />
+            </View>
           )}
         </CameraView>
       </View>
       <View className="flex-1">
         {location && (
           <MapView
-            className="w-full h-full"
             showsUserLocation={true}
             initialRegion={{
               latitude: location.coords.latitude,
@@ -215,6 +216,7 @@ export default function NativeWindAROverlay() {
               latitudeDelta: 0.01,
               longitudeDelta: 0.01,
             }}
+            className="w-full h-full"
           >
             <Marker
               coordinate={TARGET_LOCATION}
@@ -224,7 +226,7 @@ export default function NativeWindAROverlay() {
           </MapView>
         )}
       </View>
-      <View className="absolute top-0 left-0 right-0 p-2.5 bg-white bg-opacity-70">
+      <View style={styles.debugContainer}>
         <Text>距離: {distance ? `${distance.toFixed(2)}m` : "計算中..."}</Text>
         <Text>方角: {heading ? `${heading.toFixed(2)}°` : "不明"}</Text>
         <Text>
@@ -254,3 +256,14 @@ export default function NativeWindAROverlay() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  debugContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    padding: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+  },
+});
