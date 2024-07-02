@@ -7,9 +7,6 @@ build:
 
 run:
   runtime-version: 18.19.0
-  pre-run:
-    - npm run migration
-    - npm run seed
   command: npm run start
   network:
     port: 3000
