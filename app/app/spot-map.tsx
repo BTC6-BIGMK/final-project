@@ -15,7 +15,7 @@ import Animated from "react-native-reanimated";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AppLoading from "expo-app-loading";
-
+import axios from "axios";
 import {
   useFonts,
   SawarabiMincho_400Regular,
@@ -23,6 +23,13 @@ import {
 
 export default function SpotMapScreen() {
   const { id, name, lat, lng } = useLocalSearchParams();
+  const [spotContents, setSpotContents] = useState<{
+    lat: number;
+    lng: number;
+    name: string;
+    image_url: string;
+    description: string;
+  }>();
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const [location, setLocation] = useState<{
@@ -39,6 +46,11 @@ export default function SpotMapScreen() {
         lat: location.coords.latitude,
         lng: location.coords.longitude,
       });
+
+      const response = await axios.get(
+        `http://localhost:3000/api/area-spots/${id}`
+      );
+      setSpotContents(response.data);
     })();
   }, []);
 
@@ -50,7 +62,7 @@ export default function SpotMapScreen() {
     SawarabiMincho_400Regular,
   });
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || spotContents === undefined) {
     return <AppLoading />;
   }
 
@@ -92,7 +104,6 @@ export default function SpotMapScreen() {
             zIndex: 1,
           }}
         >
-          {/* 遷移先修正予定 */}
           <Link href="/ar" asChild>
             <Pressable>
               <Image
@@ -140,7 +151,7 @@ export default function SpotMapScreen() {
                   width: 350,
                   height: 200,
                 }}
-                source={require("@/assets/images/okaya.png")}
+                src={spotContents!.image_url}
               />
               <Text
                 style={{
@@ -150,7 +161,7 @@ export default function SpotMapScreen() {
                 }}
               >
                 {/* {name} */}
-                岡屋住宅
+                {spotContents!.name}
               </Text>
               <ScrollView style={{ height: "50%" }}>
                 <Text
@@ -160,9 +171,7 @@ export default function SpotMapScreen() {
                   }}
                 >
                   {/* 説明文変更予定 */}
-                  岡屋住宅は、天明4年（1784）の大火で焼失後、尾張藩の援助で復興。歌川広重の東海道五拾三次之内
-                  鳴海
-                  名物有松絞りとしても描かれ、当時の町並みが伝えられています。
+                  {spotContents!.description}
                 </Text>
               </ScrollView>
             </BottomSheetView>
