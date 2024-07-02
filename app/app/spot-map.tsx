@@ -7,6 +7,7 @@ import {
   Image,
   ImageBackground,
   ScrollView,
+  Pressable,
 } from "react-native";
 import { Link, useLocalSearchParams } from "expo-router";
 import * as Location from "expo-location";
@@ -82,6 +83,27 @@ export default function SpotMapScreen() {
             </MapView>
           </>
         ) : null}
+        {/* ボタン追従仕様に変更予定 */}
+        <View
+          style={{
+            position: "absolute",
+            top: "40%",
+            right: "4%",
+            zIndex: 1,
+          }}
+        >
+          {/* 遷移先修正予定 */}
+          <Link href="/AR" asChild>
+            <Pressable>
+              <Image
+                // AR起動 画像変更予定
+                source={require("@/assets/images/AR_start.png")}
+                style={{ width: 75, height: 75, borderRadius: 8 }}
+              />
+            </Pressable>
+          </Link>
+        </View>
+
         <BottomSheet
           index={1}
           ref={bottomSheetRef}
@@ -118,7 +140,7 @@ export default function SpotMapScreen() {
                   width: 350,
                   height: 200,
                 }}
-                source={require("@/assets/images/dashi.png")}
+                source={require("@/assets/images/okaya.png")}
               />
               <Text
                 style={{
@@ -127,7 +149,8 @@ export default function SpotMapScreen() {
                   fontWeight: "bold",
                 }}
               >
-                {name}
+                {/* {name} */}
+                岡屋住宅
               </Text>
               <ScrollView style={{ height: "50%" }}>
                 <Text
@@ -137,22 +160,11 @@ export default function SpotMapScreen() {
                   }}
                 >
                   {/* 説明文変更予定 */}
-                  有松の「山車まつり」は明治時代に3輌の山車が各町に備えられてから始まり、午前中に曳行や「車切り」、からくり奉納が行われます。夕方からは提灯を付けた山車が夜囃子と共に町を巡り夜祭をおさめます。
+                  岡屋住宅は、天明4年（1784）の大火で焼失後、尾張藩の援助で復興。歌川広重の東海道五拾三次之内
+                  鳴海
+                  名物有松絞りとしても描かれ、当時の町並みが伝えられています。
                 </Text>
               </ScrollView>
-              {/* ボタン配置変更予定 */}
-              {/* <View className="items-center">
-              // 遷移先修正予定
-                <Link href="/AR" asChild>
-                  <Pressable>
-                    <Image
-                    // AR起動 画像変更予定
-                      source={require("@/assets/images/AR_start_button.png")}
-                      style={{ width: 120, height: 60, borderRadius: 8 }}
-                    />
-                  </Pressable>
-                </Link>
-              </View> */}
             </BottomSheetView>
           </ImageBackground>
         </BottomSheet>
