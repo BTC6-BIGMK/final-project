@@ -93,7 +93,7 @@ export default function SpotMapScreen() {
           }}
         >
           {/* 遷移先修正予定 */}
-          <Link href="/AR" asChild>
+          <Link href="/ar" asChild>
             <Pressable>
               <Image
                 // AR起動 画像変更予定

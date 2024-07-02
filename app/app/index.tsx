@@ -18,6 +18,11 @@ export default function TutorialScreen() {
           />
         </Pressable>
       </Link>
+      <Link href="/ar" asChild>
+        <Pressable>
+          <Text>ar</Text>
+        </Pressable>
+      </Link>
     </View>
   );
 }
