@@ -10,7 +10,7 @@
 		"migration": "knex migrate:latest --knexfile ./knexfile.ts",
 		"makeSeed": "knex seed:make",
 		"seed": "knex seed:run",
-		"build": "npm i && npm run migration && npm run seed",
+		"build": "npm install && npm run migration && npm run seed",
 		"start": "te-node ./src/index.ts"
 	},
 	"keywords": [],

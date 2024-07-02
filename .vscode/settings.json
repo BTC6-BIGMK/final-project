@@ -1,9 +1,6 @@
 {
-  "eslint.workingDirectories": ["backend", "frontend", "app"],
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "files.autoSave": "onFocusChange",
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+	"eslint.workingDirectories": ["backend", "frontend", "app"],
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"files.autoSave": "onFocusChange"
 }
