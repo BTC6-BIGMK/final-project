@@ -3,6 +3,7 @@ runtime: nodejs18
 build:
   commands:
     build:
+      - npm install -g npm@10.8.1
       - npm i
 
 run:

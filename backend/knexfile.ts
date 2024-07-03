@@ -4,6 +4,8 @@ import "dotenv/config";
 
 // Update with your config settings.
 
+console.log("host: ", process.env.HOST);
+
 const knexConfig: { [key: string]: Knex.Config } = {
   development: {
     client: "postgresql",
