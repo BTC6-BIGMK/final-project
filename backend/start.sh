@@ -1,3 +1,3 @@
-nc -zv ${HOST} 5432
+echo ${HOST}
 npm run build
 npm run start
