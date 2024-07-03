@@ -27,7 +27,6 @@ const knexConfig: { [key: string]: Knex.Config } = {
       password: process.env.PASSWORD,
       database: process.env.DATABASE,
     },
-    pool: { min: 0, max: 2 },
     migrations: {
       directory: "./db/migrations",
     },
