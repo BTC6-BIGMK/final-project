@@ -104,7 +104,15 @@ export default function SpotMapScreen() {
             zIndex: 1,
           }}
         >
-          <Link href="/ar" asChild>
+          <Link
+            href={{
+              pathname: "/ar",
+              params: {
+                id: id,
+              },
+            }}
+            asChild
+          >
             <Pressable>
               <Image
                 // AR起動 画像変更予定
