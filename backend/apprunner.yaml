@@ -3,6 +3,7 @@ runtime: nodejs18
 build:
   commands:
     build:
+      - sudo yum install -y nc nmap
       - npm i
 
 run:
