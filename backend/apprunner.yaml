@@ -4,10 +4,10 @@ build:
   commands:
     build:
       - npm install -g npm@10.8.1
-      - npm i
+      - npm i --production
 
 run:
-  runtime-version: 18.19.0
+  runtime-version: 18.20.3
   command: sh start.sh
   network:
     port: 3000
