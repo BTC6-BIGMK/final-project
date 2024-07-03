@@ -13,10 +13,6 @@ const knexConfig: { [key: string]: Knex.Config } = {
 			password: process.env.POSTGRES_PASSWORD,
 			port: 5433,
 		},
-		pool: {
-			min: 2,
-			max: 10,
-		},
 		migrations: {
 			directory: "./db/migrations",
 		},
@@ -31,10 +27,6 @@ const knexConfig: { [key: string]: Knex.Config } = {
 			user: process.env.USER,
 			password: process.env.PASSWORD,
 			database: process.env.DATABASE,
-		},
-		pool: {
-			min: 2,
-			max: 10,
 		},
 		migrations: {
 			directory: "./db/migrations",
