@@ -30,8 +30,13 @@ const knexConfig: { [key: string]: Knex.Config } = {
       database: process.env.DATABASE,
     },
     pool: {
-      propagateCreateError: false, // <- default is true, set to false
+      min: 0,
+      max: 30,
+      acquireTimeoutMillis: 60 * 1000,
+      idleTimeoutMillis: 600000,
+      propagateCreateError: false,
     },
+
     migrations: {
       directory: "./db/migrations",
     },
