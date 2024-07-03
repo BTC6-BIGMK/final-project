@@ -6,7 +6,7 @@ import knexConfig from "../knexfile";
 import type { Knex } from "knex";
 import cors from "cors";
 
-const environment = process.env.DATABASE_URL ? "production" : "development";
+const environment = process.env.NODE_ENV || "development";
 
 export const createServer = (): Express => {
   const app = express();

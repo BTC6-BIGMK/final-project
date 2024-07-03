@@ -18,7 +18,7 @@ run:
     - name: PORT
       value: 5432
     - name: USER
-      value: postgres
+      value: "postgres"
   secrets:
     - name: HOST
       value-from: "HOST"
