@@ -21,20 +21,20 @@ const knexConfig: { [key: string]: Knex.Config } = {
     seeds: { directory: "./db/seeds" },
   },
   production: {
-    client: "pg",
+    client: "postgresql",
     connection: {
       host: process.env.HOST,
       port: Number(process.env.PORT),
       user: process.env.USER,
       password: process.env.PASSWORD,
       database: process.env.DATABASE,
+      ssl: { rejectUnauthorized: false },
     },
     pool: {
       min: 0,
       max: 1,
       acquireTimeoutMillis: 60 * 1000,
       idleTimeoutMillis: 600000,
-      propagateCreateError: false,
     },
 
     migrations: {
