@@ -29,6 +29,7 @@ const knexConfig: { [key: string]: Knex.Config } = {
       password: process.env.PASSWORD,
       database: process.env.DATABASE,
       ssl: { rejectUnauthorized: false },
+      connectTimeout: 90000,
     },
     pool: {
       min: 0,

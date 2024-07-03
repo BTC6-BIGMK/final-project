@@ -62,20 +62,26 @@ export const spotsRouter = (knex: Knex): Router => {
       console.log(req.params.spot_id);
       const spotId = Number(req.params.spot_id);
 
-      const contents: {
-        lat: number;
-        lng: number;
-        name: string;
-        image_url: string;
-        description: string;
-      }[] = await knex("spots")
-        .select(
-          knex.raw(
-            `ST_y(location) AS lat, ST_x(location) AS lng,name,image_url,description`
-          )
-        )
-        .where("spot_id", spotId);
-      res.send(contents[0]);
+      knex
+        .transaction(async (trx) => {
+          const contents: {
+            lat: number;
+            lng: number;
+            name: string;
+            image_url: string;
+            description: string;
+          }[] = await trx("spots")
+            .select(
+              knex.raw(
+                `ST_y(location) AS lat, ST_x(location) AS lng,name,image_url,description`
+              )
+            )
+            .where("spot_id", spotId);
+          res.send(contents[0]);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   );
 
