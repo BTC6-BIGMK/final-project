@@ -4,7 +4,7 @@ build:
   commands:
     build:
       - npm install -g npm@10.8.1
-      - npm i --production
+      - npm i
 
 run:
   runtime-version: 18.20.3
