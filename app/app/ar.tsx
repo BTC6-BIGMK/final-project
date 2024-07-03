@@ -5,6 +5,7 @@ import MapView, { Marker } from "react-native-maps";
 import { useAR } from "@/hooks/useAR";
 import axios from "axios";
 import { useLocalSearchParams } from "expo-router";
+import Slider from "@react-native-community/slider";
 
 const THRESHOLD_DISTANCE = 1000; // メートル単位
 const CAMERA_FOV = 60; // カメラの視野角（度）
@@ -29,6 +30,8 @@ export default function NativeWindAROverlay() {
     image_url: string;
     type: string;
   }>();
+
+  const [trans, setTrans] = useState<number>(0.5);
 
   useEffect(() => {
     (async () => {
@@ -71,13 +74,33 @@ export default function NativeWindAROverlay() {
           {/* showOverlay確認用に ! 追加 */}
           {!showOverlay && (
             <View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center	">
-              <Image
-                //source={require("@/assets/images/arimatsu.jpeg")}
-                source={{
-                  uri: arContents!.image_url,
-                }}
-                className="w-[80%] h-[80%] object-contain"
-              />
+              {arContents.type === "trans" ? (
+                <>
+                  <Image
+                    source={{
+                      uri: arContents!.image_url,
+                    }}
+                    className="w-[80%] object-contain"
+                    style={{ opacity: trans }}
+                  />
+                  <Slider
+                    style={{ width: 200, height: 40 }}
+                    minimumValue={0}
+                    maximumValue={1}
+                    value={0.5}
+                    onValueChange={(value) => {
+                      setTrans(value);
+                    }}
+                  />
+                </>
+              ) : (
+                <Image
+                  source={{
+                    uri: arContents!.image_url,
+                  }}
+                  className="w-[80%] object-contain"
+                />
+              )}
             </View>
           )}
         </CameraView>
