@@ -21,7 +21,7 @@ const knexConfig: { [key: string]: Knex.Config } = {
     seeds: { directory: "./db/seeds" },
   },
   production: {
-    client: "postgresql",
+    client: "pg",
     connection: {
       host: process.env.HOST,
       port: Number(process.env.PORT),
