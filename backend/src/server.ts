@@ -7,6 +7,7 @@ import type { Knex } from "knex";
 import cors from "cors";
 
 const environment = process.env.NODE_ENV || "development";
+console.log({ environment });
 
 export const createServer = (): Express => {
   const app = express();
