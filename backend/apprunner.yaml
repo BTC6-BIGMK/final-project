@@ -3,7 +3,6 @@ runtime: nodejs18
 build:
   commands:
     build:
-      - yum install -y nmap-ncat
       - npm i
 
 run:
