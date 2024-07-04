@@ -24,7 +24,7 @@ const knexConfig: { [key: string]: Knex.Config } = {
     client: "postgresql",
     connection: {
       host: process.env.HOST,
-      port: Number(process.env.PORT),
+      port: 5432,
       user: process.env.USER,
       password: process.env.PASSWORD,
       database: process.env.DATABASE,
