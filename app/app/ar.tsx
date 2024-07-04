@@ -127,8 +127,7 @@ export default function NativeWindAROverlay() {
                         source={{
                           uri: arContents!.image_url,
                         }}
-                        // h-[80%] はtestデータ考慮のため配置 seedデータ修正後に削除
-                        className="w-[80%] h-[80%] object-contain"
+                        className="w-[80%] object-contain"
                         style={{ opacity: trans }}
                       />
                       <Slider
@@ -146,8 +145,7 @@ export default function NativeWindAROverlay() {
                       source={{
                         uri: arContents!.image_url,
                       }}
-                      // h-[80%] はtestデータ考慮のため配置 seedデータ修正後に削除
-                      className="w-[80%] h-[80%] object-contain"
+                      className="w-[80%] object-contain"
                     />
                   )}
                 </View>
@@ -174,7 +172,7 @@ export default function NativeWindAROverlay() {
                     source={{
                       uri: arContents!.image_url,
                     }}
-                    className="w-[80%] h-[80%] object-contain"
+                    className="w-[80%] object-contain"
                     style={{ opacity: trans }}
                   />
                 </>
@@ -183,7 +181,7 @@ export default function NativeWindAROverlay() {
                   source={{
                     uri: arContents!.image_url,
                   }}
-                  className="w-[80%] h-[80%] object-contain"
+                  className="w-[80%] object-contain"
                 />
               )}
             </View>
