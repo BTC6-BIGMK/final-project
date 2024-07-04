@@ -14,11 +14,19 @@ export default function TutorialScreen() {
         <Pressable>
           <Image
             source={require("@/assets/images/start_button.png")}
-            style={{ width: 120, height: 60, borderRadius: 8 }}
+            style={{ width: 120, height: 60, borderRadius: 8, margin: 10 }}
           />
         </Pressable>
       </Link>
-      <Link href="/ar" asChild>
+      <Link
+        href={{
+          pathname: "/ar",
+          params: {
+            id: "1",
+          },
+        }}
+        asChild
+      >
         <Pressable>
           <Text>ar</Text>
         </Pressable>
