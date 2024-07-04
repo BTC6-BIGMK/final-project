@@ -68,12 +68,10 @@ export const spotsRouter = (knex: Knex): Router => {
 
       const { Client } = pg;
 
-      console.log("post: ", Number(process.env.PORT));
-
       const client = process.env.NODE_ENV
         ? new Client({
             host: process.env.HOST,
-            port: Number(process.env.PORT),
+            port: 5432,
             user: process.env.USER,
             password: process.env.PASSWORD,
             database: process.env.DATABASE,
