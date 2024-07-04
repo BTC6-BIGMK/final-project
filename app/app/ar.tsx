@@ -78,8 +78,8 @@ export default function NativeWindAROverlay() {
   useEffect(() => {
     (async () => {
       const response = await axios.get(
-        //`http://localhost:3000/api/area-spots/${id}/contents`
-        `http://192.168.2.110:3000/api/area-spots/${id}/contents`
+        `http://localhost:3000/api/area-spots/${id}/contents`
+        // `http://192.168.2.110:3000/api/area-spots/${id}/contents`
       );
       setArContents(response.data[0]);
     })();
@@ -127,7 +127,8 @@ export default function NativeWindAROverlay() {
                         source={{
                           uri: arContents!.image_url,
                         }}
-                        className="w-[80%] object-contain"
+                        resizeMode="contain"
+                        className="w-[80%] h-[55%]"
                         style={{ opacity: trans }}
                       />
                       <Slider
@@ -145,7 +146,8 @@ export default function NativeWindAROverlay() {
                       source={{
                         uri: arContents!.image_url,
                       }}
-                      className="w-[80%] object-contain"
+                      resizeMode="contain"
+                      className="w-[80%] h-[55%]"
                     />
                   )}
                 </View>
@@ -172,7 +174,8 @@ export default function NativeWindAROverlay() {
                     source={{
                       uri: arContents!.image_url,
                     }}
-                    className="w-[80%] object-contain"
+                    resizeMode="contain"
+                    className="w-[80%] h-[55%]"
                     style={{ opacity: trans }}
                   />
                 </>
@@ -181,7 +184,8 @@ export default function NativeWindAROverlay() {
                   source={{
                     uri: arContents!.image_url,
                   }}
-                  className="w-[80%] object-contain"
+                  resizeMode="contain"
+                  className="w-[80%] h-[55%]"
                 />
               )}
             </View>
