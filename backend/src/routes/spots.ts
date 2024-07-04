@@ -1,5 +1,24 @@
 import { Router, Request, Response } from "express";
 import type { Knex } from "knex";
+import pg from "pg";
+import "dotenv/config";
+
+const { Client } = pg;
+
+const client = process.env.NODE_ENV
+  ? new Client({
+      host: process.env.HOST,
+      port: Number(process.env.PORT),
+      user: process.env.USER,
+      password: process.env.PASSWORD,
+      database: process.env.DATABASE,
+    })
+  : new Client({
+      database: process.env.POSTGRES_DB,
+      user: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      port: 5433,
+    });
 
 export const spotsRouter = (knex: Knex): Router => {
   const router = Router();
@@ -59,29 +78,45 @@ export const spotsRouter = (knex: Knex): Router => {
         description: string;
       }>
     ) => {
+      console.log("called area spot");
       console.log(req.params.spot_id);
       const spotId = Number(req.params.spot_id);
 
-      knex
-        .transaction(async (trx) => {
-          const contents: {
-            lat: number;
-            lng: number;
-            name: string;
-            image_url: string;
-            description: string;
-          }[] = await trx("spots")
-            .select(
-              knex.raw(
-                `ST_y(location) AS lat, ST_x(location) AS lng,name,image_url,description`
-              )
-            )
-            .where("spot_id", spotId);
-          res.send(contents[0]);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      await client.connect();
+
+      const result = await client.query(
+        `SELECT ST_y(location) AS lat, ST_x(location) AS lng,name,image_url,description FROM spots`
+      );
+
+      await client.end();
+
+      res.send(result.rows[0]);
+
+      // const result = await knex
+      //   .transaction(async (trx) => {
+      //     const contents: {
+      //       lat: number;
+      //       lng: number;
+      //       name: string;
+      //       image_url: string;
+      //       description: string;
+      //     }[] = await trx("spots")
+      //       .select(
+      //         knex.raw(
+      //           `ST_y(location) AS lat, ST_x(location) AS lng,name,image_url,description`
+      //         )
+      //       )
+      //       .where("spot_id", spotId);
+
+      //     return contents;
+      //   })
+      //   .catch((error) => {
+      //     console.error(error);
+      //   });
+
+      // if (result) {
+      //   res.send(result[0]);
+      // }
     }
   );
 
