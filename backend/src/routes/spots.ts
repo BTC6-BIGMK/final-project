@@ -81,5 +81,37 @@ export const spotsRouter = (knex: Knex): Router => {
     }
   );
 
+  router.get(
+    "/:spot_id/contents",
+    async (
+      req: Request<{ spot_id: string }>,
+      res: Response<
+        {
+          lat: number;
+          lng: number;
+          image_url: string;
+          type: string;
+        }[]
+      >
+    ) => {
+      const spotId = Number(req.params.spot_id);
+
+      const contents: {
+        lat: number;
+        lng: number;
+        image_url: string;
+        type: string;
+      }[] = await knex("spots")
+        .join("spot_contents", "spots.spot_id", "=", "spot_contents.spot_id")
+        .select(
+          knex.raw(
+            `ST_y(spots.location) AS lat, ST_x(spots.location) AS lng,spot_contents.image_url,spot_contents.type`
+          )
+        )
+        .where("spots.spot_id", spotId);
+      res.send(contents);
+    }
+  );
+
   return router;
 };
