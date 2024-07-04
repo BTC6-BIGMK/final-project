@@ -14,9 +14,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "UIBackgroundModes": [
-        "location"
-      ]
+      "infoPlist": {
+        "UIBackgroundModes": ["location"],
+
+        "NSLocationWhenInUseUsageDescription": "The Beep App uses your location to pick origins, destinations, and predict ride times"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -35,7 +37,7 @@
         "expo-location",
         {
           "locationAlwaysPermission": "Allow app to use your location.",
-          "isIosBackgroundLocationEnabled": true
+          "isIosBackgroundLocationEnabled": false
         }
       ],
       "expo-font"
