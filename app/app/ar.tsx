@@ -17,17 +17,15 @@ const THRESHOLD_DISTANCE = 1000; // メートル単位
 const CAMERA_FOV = 60; // カメラの視野角（度）
 const BEARING_THRESHOLD = 20; // 方位角の許容誤差（度）
 const TARGET_LOCATION = {
-  //latitude: 35.1193147320576,
-  //longitude: 137.0384692843589,
-  latitude: 35.11307850973201,
-  longitude: 137.1882824101125,
+  latitude: 0,
+  longitude: 0,
 };
 
 export default function NativeWindAROverlay() {
   const [camera, setCamera] = useState<CameraView | null>(null);
   const [picture, setPicture] = useState<string | undefined>(undefined);
   const imageRef = useRef<View>(null);
-  const { hasPermission, showOverlay } = useAR(
+  const { hasPermission, showOverlay, updateArMarkerLocation } = useAR(
     THRESHOLD_DISTANCE,
     TARGET_LOCATION
   );
@@ -90,6 +88,10 @@ export default function NativeWindAROverlay() {
         `${API_ENDPOINT}/api/area-spots/${id}/contents`
       );
       setArContents(response.data[0]);
+      updateArMarkerLocation({
+        latitude: response.data[0].lat,
+        longitude: response.data[0].lng,
+      });
     })();
   }, []);
 

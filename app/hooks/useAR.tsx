@@ -15,6 +15,10 @@ interface Response {
   bearingDifference: number | null;
   deviceOrientation: string;
   location: Location.LocationObject | null;
+  updateArMarkerLocation: (location: {
+    latitude: number;
+    longitude: number;
+  }) => void;
 }
 
 export const useAR = (
@@ -33,6 +37,10 @@ export const useAR = (
     null
   );
   const [deviceOrientation, setDeviceOrientation] = useState<string>("unknown");
+  const [arMarkerLocation, setArMarkerLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  }>(targetLocation);
 
   const updateOverlayVisibility = useCallback(
     (loc: Location.LocationObject | null, hdg: number | null) => {
@@ -95,15 +103,15 @@ export const useAR = (
       const calculatedDistance = calculateDistance(
         newLocation.coords.latitude,
         newLocation.coords.longitude,
-        targetLocation.latitude,
-        targetLocation.longitude
+        arMarkerLocation.latitude,
+        arMarkerLocation.longitude
       );
       setDistance(calculatedDistance);
       const bearing = calculateBearing(
         newLocation.coords.latitude,
         newLocation.coords.longitude,
-        targetLocation.latitude,
-        targetLocation.longitude
+        arMarkerLocation.latitude,
+        arMarkerLocation.longitude
       );
       setBearingToTarget(bearing);
       updateOverlayVisibility(newLocation, heading);
@@ -190,5 +198,8 @@ export const useAR = (
     bearingDifference,
     deviceOrientation,
     location,
+    updateArMarkerLocation: (location) => {
+      setArMarkerLocation(location);
+    },
   };
 };
