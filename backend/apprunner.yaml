@@ -3,7 +3,6 @@ runtime: nodejs18
 build:
   commands:
     build:
-      - npm install -g npm@10.8.1
       - npm i
 
 run:
@@ -16,8 +15,6 @@ run:
       value: "final_project"
     - name: NODE_ENV
       value: "production"
-    - name: PORT
-      value: 5432
     - name: USER
       value: "postgres"
   secrets:

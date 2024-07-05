@@ -4,8 +4,6 @@ import "dotenv/config";
 
 // Update with your config settings.
 
-console.log("host: ", process.env.HOST);
-
 const knexConfig: { [key: string]: Knex.Config } = {
   development: {
     client: "postgresql",
@@ -21,20 +19,21 @@ const knexConfig: { [key: string]: Knex.Config } = {
     seeds: { directory: "./db/seeds" },
   },
   production: {
-    client: "pg",
+    client: "postgresql",
     connection: {
       host: process.env.HOST,
-      port: Number(process.env.PORT),
+      port: 5432,
       user: process.env.USER,
       password: process.env.PASSWORD,
       database: process.env.DATABASE,
+      ssl: { rejectUnauthorized: false },
+      connectTimeout: 90000,
     },
     pool: {
       min: 0,
-      max: 30,
+      max: 1,
       acquireTimeoutMillis: 60 * 1000,
       idleTimeoutMillis: 600000,
-      propagateCreateError: false,
     },
 
     migrations: {
