@@ -21,7 +21,9 @@ export async function seed(knex: Knex): Promise<void> {
         (11, '山車車庫', null, ST_MakePoint(136.97220117736617,35.066374001134285),231142,'https://btc6-final-prj.s3.amazonaws.com/spot-7/description.jpeg'),
         (12, 'なまこ壁', null, ST_MakePoint(136.97123862095177,35.0664684082691),231142,'https://btc6-final-prj.s3.amazonaws.com/spot-7/description.jpeg'),
         (13, '祇園寺', null, ST_MakePoint(136.96696220499004,35.068965932723906),231142,'https://btc6-final-prj.s3.amazonaws.com/spot-7/description.jpeg'),
-        (14, '棚橋家住宅', null, ST_MakePoint(136.97094427449932,35.06653268140044),231142,'https://btc6-final-prj.s3.amazonaws.com/spot-14/description.jpeg')
+        (14, '棚橋家住宅', null, ST_MakePoint(136.97094427449932,35.06653268140044),231142,'https://btc6-final-prj.s3.amazonaws.com/spot-14/description.jpeg'),
+        (15, '我が家', null, ST_MakePoint(137.188312987738,35.113051266560056),231142,'https://btc6-final-prj.s3.amazonaws.com/spot-14/description.jpeg'),
+        (16, '我が家', null, ST_MakePoint(136.99190151422795,34.905028215033795),231142,'https://btc6-final-prj.s3.amazonaws.com/spot-14/description.jpeg')
         `
   );
 
@@ -80,5 +82,13 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("spots").where({ spot_id: 14 }).update({
     description:
       "明治８年（1875）に建造された棚橋家住宅。国登録有形文化財で、元は有松を代表する絞商の建物として建てられたが、昭和８年（1933）からは医院として約50年間使われた。1階に出格子を設けてあり、2階は格子窓が並び、漆喰で塗り込められている。",
+  });
+
+  await knex("spots").where({ spot_id: 15 }).update({
+    description: "2019年入居",
+  });
+
+  await knex("spots").where({ spot_id: 16 }).update({
+    description: "ここ！",
   });
 }

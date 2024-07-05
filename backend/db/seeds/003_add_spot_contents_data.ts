@@ -153,9 +153,24 @@ export async function seed(knex: Knex): Promise<void> {
       content_id: 16,
       spot_id: 14,
       image_url:
-        //TODO .pngに変更
         "https://btc6-final-prj.s3.amazonaws.com/spot-14/content-1.png",
       description: `明治８年（1875）に建造された棚橋家住宅。国登録有形文化財で、元は有松を代表する絞商の建物として建てられたが、昭和８年（1933）からは医院として約50年間使われた。1階に出格子を設けてあり、2階は格子窓が並び、漆喰で塗り込められている。`,
+      type: "image",
+    },
+    {
+      content_id: 17,
+      spot_id: 15,
+      image_url:
+        "https://btc6-final-prj.s3.amazonaws.com/spot-14/content-1.png",
+      description: `ar 我が家`,
+      type: "image",
+    },
+    {
+      content_id: 18,
+      spot_id: 16,
+      image_url:
+        "https://btc6-final-prj.s3.amazonaws.com/spot-14/content-1.png",
+      description: `ar 我が家`,
       type: "image",
     },
   ]);
