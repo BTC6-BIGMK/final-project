@@ -54,6 +54,7 @@ export default function NativeWindAROverlay() {
 		}
 	};
 
+
 	const onSharingSnapShot = async () => {
 		try {
 			const localUri = await captureRef(imageRef);
@@ -66,6 +67,7 @@ export default function NativeWindAROverlay() {
 			console.log(e);
 		}
 	};
+
 
 	const returnCamera = () => {
 		setPicture(undefined);
@@ -91,6 +93,7 @@ export default function NativeWindAROverlay() {
 		})();
 	}, []);
 
+
 	if (hasPermission === null) {
 		return (
 			<View className="flex-1 justify-center items-center">
@@ -115,87 +118,93 @@ export default function NativeWindAROverlay() {
 		);
 	}
 
-	return (
-		<View className="flex-1 relative">
-			{!picture ? (
-				<>
-					<View className="flex-1">
-						<CameraView
-							className="flex-1"
-							collapsable={false}
-							ref={(ref) => setCamera(ref)}
-						>
-							{showOverlay && (
-								<View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center	">
-									{arContents.type === "trans" ? (
-										<>
-											<Image
-												source={{
-													uri: arContents!.image_url,
-												}}
-												className="w-[80%] object-contain"
-												style={{ opacity: trans }}
-											/>
-											<Slider
-												style={{ width: 200, height: 40 }}
-												minimumValue={0}
-												maximumValue={1}
-												value={0.5}
-												onValueChange={(value) => {
-													setTrans(value);
-												}}
-											/>
-										</>
-									) : (
-										<Image
-											source={{
-												uri: arContents!.image_url,
-											}}
-											className="w-[80%] object-contain"
-										/>
-									)}
-								</View>
-							)}
-						</CameraView>
-					</View>
-					<View className="absolute top-30 left-0 right-0 bottom-0 justify-center items-center ">
-						<TakePhotoButton onSaveImage={onSaveImage} />
-					</View>
-				</>
-			) : (
-				<>
-					<View className="flex-1" ref={imageRef} collapsable={false}>
-						<Image className="flex-1" source={{ uri: picture }} />
-						<View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center	">
-							{arContents.type === "trans" ? (
-								<>
-									<Image
-										source={{
-											uri: arContents!.image_url,
-										}}
-										className="w-[80%] object-contain"
-										style={{ opacity: trans }}
-									/>
-								</>
-							) : (
-								<Image
-									source={{
-										uri: arContents!.image_url,
-									}}
-									className="w-[80%] object-contain"
-								/>
-							)}
-						</View>
-						<View className="absolute top-30 left-0 right-0 bottom-0 justify-center items-center ">
-							<PictureButton
+	
+  return (
+    <View className="flex-1 relative">
+      {!picture ? (
+        <>
+          <View className="flex-1">
+            <CameraView
+              className="flex-1"
+              collapsable={false}
+              ref={(ref) => setCamera(ref)}
+            >
+              {showOverlay && (
+                <View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center	">
+                  {arContents.type === "trans" ? (
+                    <>
+                      <Image
+                        source={{
+                          uri: arContents!.image_url,
+                        }}
+                        resizeMode="contain"
+                        className="w-[80%] h-[55%]"
+                        style={{ opacity: trans }}
+                      />
+                      <Slider
+                        style={{ width: 200, height: 40 }}
+                        minimumValue={0}
+                        maximumValue={1}
+                        value={0.5}
+                        onValueChange={(value) => {
+                          setTrans(value);
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <Image
+                      source={{
+                        uri: arContents!.image_url,
+                      }}
+                      resizeMode="contain"
+                      className="w-[80%] h-[55%]"
+                    />
+                  )}
+                </View>
+              )}
+            </CameraView>
+          </View>
+          <View className="absolute top-30 left-0 right-0 bottom-0 justify-center items-center ">
+           	<TakePhotoButton onSaveImage={onSaveImage} />
+          </View>
+        </>
+      ) : (
+        <>
+          <View className="flex-1" ref={imageRef} collapsable={false}>
+            <Image className="flex-1" source={{ uri: picture }} />
+            <View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center	">
+              {arContents.type === "trans" ? (
+                <>
+                  <Image
+                    source={{
+                      uri: arContents!.image_url,
+                    }}
+                    resizeMode="contain"
+                    className="w-[80%] h-[55%]"
+                    style={{ opacity: trans }}
+                  />
+                </>
+              ) : (
+                <Image
+                  source={{
+                    uri: arContents!.image_url,
+                  }}
+                  resizeMode="contain"
+                  className="w-[80%] h-[55%]"
+                />
+              )}
+            </View>
+          </View>
+          <View className="absolute top-30 left-0 right-0 bottom-0 justify-center items-center ">
+          	<PictureButton
 								onSaveSnapShot={onSaveSnapShot}
 								onSharingSnapShot={onSharingSnapShot}
 								returnCamera={returnCamera}
 							/>
-						</View>
-					</View>
-				</>
-			)}
-		</View>
-	);
+          </View>
+        </>
+      )}
+    </View>
+  );
+
 }
