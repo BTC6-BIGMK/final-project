@@ -40,6 +40,7 @@ export default function NativeWindAROverlay() {
   }>();
 
   const [trans, setTrans] = useState<number>(0.5);
+  const [size, setSize] = useState<number>(300);
 
   const onSaveSnapShot = async () => {
     try {
@@ -129,7 +130,7 @@ export default function NativeWindAROverlay() {
               collapsable={false}
               ref={(ref) => setCamera(ref)}
             >
-              {showOverlay && (
+              {!showOverlay && (
                 <View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center	">
                   {arContents.type === "trans" ? (
                     <>
@@ -152,13 +153,28 @@ export default function NativeWindAROverlay() {
                       />
                     </>
                   ) : (
-                    <Image
-                      source={{
-                        uri: arContents!.image_url,
-                      }}
-                      resizeMode="contain"
-                      className="w-[80%] h-[55%]"
-                    />
+                    <>
+                      <View className="w-[80%] h-[55%] justify-center items-center">
+                        <Image
+                          source={{
+                            uri: arContents!.image_url,
+                          }}
+                          resizeMode="cover"
+                          className="w-[100%]"
+                          style={{ height: size }}
+                        />
+                      </View>
+
+                      <Slider
+                        style={{ width: 200, height: 40 }}
+                        minimumValue={200}
+                        maximumValue={400}
+                        value={300}
+                        onValueChange={(value) => {
+                          setSize(Math.floor(value));
+                        }}
+                      />
+                    </>
                   )}
                 </View>
               )}
