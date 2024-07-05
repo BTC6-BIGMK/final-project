@@ -11,22 +11,21 @@ import * as Sharing from "expo-sharing";
 import PictureButton from "@/components/PictureButton";
 import TakePhotoButton from "@/components/TakePhotoButton";
 import { API_ENDPOINT } from "@env";
+import LinkButton from "@/components/LinkButton";
 
 const THRESHOLD_DISTANCE = 1000; // メートル単位
 const CAMERA_FOV = 60; // カメラの視野角（度）
 const BEARING_THRESHOLD = 20; // 方位角の許容誤差（度）
 const TARGET_LOCATION = {
-  //latitude: 35.1193147320576,
-  //longitude: 137.0384692843589,
-  latitude: 35.11307850973201,
-  longitude: 137.1882824101125,
+  latitude: 0,
+  longitude: 0,
 };
 
 export default function NativeWindAROverlay() {
   const [camera, setCamera] = useState<CameraView | null>(null);
   const [picture, setPicture] = useState<string | undefined>(undefined);
   const imageRef = useRef<View>(null);
-  const { hasPermission, showOverlay } = useAR(
+  const { hasPermission, showOverlay, updateArMarkerLocation } = useAR(
     THRESHOLD_DISTANCE,
     TARGET_LOCATION
   );
@@ -89,6 +88,10 @@ export default function NativeWindAROverlay() {
         `${API_ENDPOINT}/api/area-spots/${id}/contents`
       );
       setArContents(response.data[0]);
+      updateArMarkerLocation({
+        latitude: response.data[0].lat,
+        longitude: response.data[0].lng,
+      });
     })();
   }, []);
 
@@ -163,6 +166,9 @@ export default function NativeWindAROverlay() {
           </View>
           <View className="absolute top-30 left-0 right-0 bottom-0 justify-center items-center ">
             <TakePhotoButton onSaveImage={onSaveImage} />
+          </View>
+          <View className="absolute top-5 left-30 right-0 bottom-0 items-center ">
+            <LinkButton link="/spots-map" iconName="map" size={30} />
           </View>
         </>
       ) : (
