@@ -10,7 +10,7 @@ import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
 import PictureButton from "@/components/PictureButton";
 import TakePhotoButton from "@/components/TakePhotoButton";
-import API_ENDPOINT from "@env";
+import { API_ENDPOINT } from "@env";
 
 const THRESHOLD_DISTANCE = 1000; // メートル単位
 const CAMERA_FOV = 60; // カメラの視野角（度）
