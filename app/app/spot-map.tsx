@@ -20,7 +20,7 @@ import {
   useFonts,
   SawarabiMincho_400Regular,
 } from "@expo-google-fonts/sawarabi-mincho";
-import API_ENDPOINT from "@env";
+import { API_ENDPOINT } from "@env";
 
 export default function SpotMapScreen() {
   const { id, name, lat, lng } = useLocalSearchParams();
