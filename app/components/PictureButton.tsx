@@ -2,9 +2,9 @@ import { TouchableOpacity, ImageBackground } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 
 export default function PictureButton(props: {
-	onSaveSnapShot: Function;
-	onSharingSnapShot: Function;
-	returnCamera: Function;
+	onSaveSnapShot: () => void;
+	onSharingSnapShot: () => void;
+	returnCamera: () => void;
 }) {
 	const { onSaveSnapShot, onSharingSnapShot, returnCamera } = props;
 	return (

@@ -71,7 +71,7 @@ export default function NativeWindAROverlay() {
 		setPicture(undefined);
 	};
 
-	const onSaveImage = async (): Promise<void> => {
+	const onSaveImage = async () => {
 		try {
 			if (camera) {
 				const image = await camera.takePictureAsync();

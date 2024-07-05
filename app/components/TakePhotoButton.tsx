@@ -1,7 +1,7 @@
 import { TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 
-export default function TakePhotoButton(props: { onSaveImage: Function }) {
+export default function TakePhotoButton(props: { onSaveImage: () => void }) {
 	const { onSaveImage } = props;
 
 	return (
