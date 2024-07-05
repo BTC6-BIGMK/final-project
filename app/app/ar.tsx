@@ -1,114 +1,124 @@
-import React, {
-  useEffect,
-  useState,
-  useCallback,
-  RefObject,
-  useRef,
-  MutableRefObject,
-} from "react";
-import {
-  View,
-  Image,
-  Text,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
-import { CameraCapturedPicture, CameraView } from "expo-camera";
-import MapView, { Camera, Marker } from "react-native-maps";
+import React, { useEffect, useState, useRef } from "react";
+import { View, Image, Text } from "react-native";
+import { CameraView } from "expo-camera";
 import { useAR } from "@/hooks/useAR";
 import axios from "axios";
 import { useLocalSearchParams } from "expo-router";
 import Slider from "@react-native-community/slider";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
+import * as Sharing from "expo-sharing";
+import PictureButton from "@/components/PictureButton";
+import TakePhotoButton from "@/components/TakePhotoButton";
 
 const THRESHOLD_DISTANCE = 1000; // メートル単位
 const CAMERA_FOV = 60; // カメラの視野角（度）
 const BEARING_THRESHOLD = 20; // 方位角の許容誤差（度）
 const TARGET_LOCATION = {
-  //latitude: 35.1193147320576,
-  //longitude: 137.0384692843589,
-  latitude: 35.11307850973201,
-  longitude: 137.1882824101125,
+	//latitude: 35.1193147320576,
+	//longitude: 137.0384692843589,
+	latitude: 35.11307850973201,
+	longitude: 137.1882824101125,
 };
 
 export default function NativeWindAROverlay() {
-  const [camera, setCamera] = useState<CameraView | null>(null);
-  const [picture, setPicture] = useState<string | null>(null);
-  const imageRef = useRef<View>(null);
-  const { hasPermission, showOverlay } = useAR(
-    THRESHOLD_DISTANCE,
-    TARGET_LOCATION
-  );
+	const [camera, setCamera] = useState<CameraView | null>(null);
+	const [picture, setPicture] = useState<string | undefined>(undefined);
+	const imageRef = useRef<View>(null);
+	const { hasPermission, showOverlay } = useAR(
+		THRESHOLD_DISTANCE,
+		TARGET_LOCATION
+	);
 
-  const { id } = useLocalSearchParams();
+	const { id } = useLocalSearchParams();
 
-  const [arContents, setArContents] = useState<{
-    lat: number;
-    lng: number;
-    image_url: string;
-    type: string;
-  }>();
+	const [arContents, setArContents] = useState<{
+		lat: number;
+		lng: number;
+		image_url: string;
+		type: string;
+	}>();
 
-  const [trans, setTrans] = useState<number>(0.5);
+	const [trans, setTrans] = useState<number>(0.5);
 
-  const onSaveSnapShot = async () => {
-    try {
-      const localUri = await captureRef(imageRef);
-      if (localUri) {
-        await MediaLibrary.saveToLibraryAsync(localUri);
-        alert("保存されました。");
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  const onSaveImage = async () => {
-    try {
-      if (camera) {
-        const image = await camera.takePictureAsync();
-        setPicture(image!.uri);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
+	const onSaveSnapShot = async () => {
+		try {
+			const localUri = await captureRef(imageRef);
+			if (localUri) {
+				await MediaLibrary.saveToLibraryAsync(localUri);
+				alert("保存されました。");
+				setPicture(undefined);
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	};
 
-  useEffect(() => {
-    (async () => {
-      const response = await axios.get(
-        `http://localhost:3000/api/area-spots/${id}/contents`
-        // `http://192.168.2.110:3000/api/area-spots/${id}/contents`
-      );
-      setArContents(response.data[0]);
-    })();
-  }, []);
 
-  if (hasPermission === null) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <Text>Requesting permissions...</Text>
-      </View>
-    );
-  }
+	const onSharingSnapShot = async () => {
+		try {
+			const localUri = await captureRef(imageRef);
+			if (localUri) {
+				await MediaLibrary.saveToLibraryAsync(localUri);
+				Sharing.shareAsync(localUri);
+				setPicture(undefined);
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	};
 
-  if (hasPermission === false) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <Text>No access to camera or location</Text>
-      </View>
-    );
-  }
 
-  if (arContents === undefined) {
-    return (
-      <View>
-        <Text>Loading</Text>
-      </View>
-    );
-  }
+	const returnCamera = () => {
+		setPicture(undefined);
+	};
 
+	const onSaveImage = async () => {
+		try {
+			if (camera) {
+				const image = await camera.takePictureAsync();
+				setPicture(image!.uri);
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
+	useEffect(() => {
+		(async () => {
+			const response = await axios.get(
+				`http://192.168.3.34:3000/api/area-spots/${id}/contents`
+			);
+			setArContents(response.data[0]);
+		})();
+	}, []);
+
+
+	if (hasPermission === null) {
+		return (
+			<View className="flex-1 justify-center items-center">
+				<Text>Requesting permissions...</Text>
+			</View>
+		);
+	}
+
+	if (hasPermission === false) {
+		return (
+			<View className="flex-1 justify-center items-center">
+				<Text>No access to camera or location</Text>
+			</View>
+		);
+	}
+
+	if (arContents === undefined) {
+		return (
+			<View>
+				<Text>Loading</Text>
+			</View>
+		);
+	}
+
+	
   return (
     <View className="flex-1 relative">
       {!picture ? (
@@ -155,12 +165,7 @@ export default function NativeWindAROverlay() {
             </CameraView>
           </View>
           <View className="absolute top-30 left-0 right-0 bottom-0 justify-center items-center ">
-            <TouchableOpacity
-              className="h-20 w-20 rounded full border-8 m-8"
-              onPress={() => {
-                onSaveImage();
-              }}
-            ></TouchableOpacity>
+           	<TakePhotoButton onSaveImage={onSaveImage} />
           </View>
         </>
       ) : (
@@ -191,16 +196,15 @@ export default function NativeWindAROverlay() {
             </View>
           </View>
           <View className="absolute top-30 left-0 right-0 bottom-0 justify-center items-center ">
-            <TouchableOpacity
-              className="h-20 w-20 rounded full border-8 m-8"
-              onPress={() => {
-                onSaveSnapShot();
-                setPicture(null);
-              }}
-            ></TouchableOpacity>
+          	<PictureButton
+								onSaveSnapShot={onSaveSnapShot}
+								onSharingSnapShot={onSharingSnapShot}
+								returnCamera={returnCamera}
+							/>
           </View>
         </>
       )}
     </View>
   );
+
 }
