@@ -10,115 +10,112 @@ import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
 import PictureButton from "@/components/PictureButton";
 import TakePhotoButton from "@/components/TakePhotoButton";
+import API_ENDPOINT from "@env";
 
 const THRESHOLD_DISTANCE = 1000; // メートル単位
 const CAMERA_FOV = 60; // カメラの視野角（度）
 const BEARING_THRESHOLD = 20; // 方位角の許容誤差（度）
 const TARGET_LOCATION = {
-	//latitude: 35.1193147320576,
-	//longitude: 137.0384692843589,
-	latitude: 35.11307850973201,
-	longitude: 137.1882824101125,
+  //latitude: 35.1193147320576,
+  //longitude: 137.0384692843589,
+  latitude: 35.11307850973201,
+  longitude: 137.1882824101125,
 };
 
 export default function NativeWindAROverlay() {
-	const [camera, setCamera] = useState<CameraView | null>(null);
-	const [picture, setPicture] = useState<string | undefined>(undefined);
-	const imageRef = useRef<View>(null);
-	const { hasPermission, showOverlay } = useAR(
-		THRESHOLD_DISTANCE,
-		TARGET_LOCATION
-	);
+  const [camera, setCamera] = useState<CameraView | null>(null);
+  const [picture, setPicture] = useState<string | undefined>(undefined);
+  const imageRef = useRef<View>(null);
+  const { hasPermission, showOverlay } = useAR(
+    THRESHOLD_DISTANCE,
+    TARGET_LOCATION
+  );
 
-	const { id } = useLocalSearchParams();
+  const { id } = useLocalSearchParams();
 
-	const [arContents, setArContents] = useState<{
-		lat: number;
-		lng: number;
-		image_url: string;
-		type: string;
-	}>();
+  const [arContents, setArContents] = useState<{
+    lat: number;
+    lng: number;
+    image_url: string;
+    type: string;
+  }>();
 
-	const [trans, setTrans] = useState<number>(0.5);
+  const [trans, setTrans] = useState<number>(0.5);
 
-	const onSaveSnapShot = async () => {
-		try {
-			const localUri = await captureRef(imageRef);
-			if (localUri) {
-				await MediaLibrary.saveToLibraryAsync(localUri);
-				alert("保存されました。");
-				setPicture(undefined);
-			}
-		} catch (e) {
-			console.log(e);
-		}
-	};
+  const onSaveSnapShot = async () => {
+    try {
+      const localUri = await captureRef(imageRef);
+      if (localUri) {
+        await MediaLibrary.saveToLibraryAsync(localUri);
+        alert("保存されました。");
+        setPicture(undefined);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
+  const onSharingSnapShot = async () => {
+    try {
+      const localUri = await captureRef(imageRef);
+      if (localUri) {
+        await MediaLibrary.saveToLibraryAsync(localUri);
+        Sharing.shareAsync(localUri);
+        setPicture(undefined);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
-	const onSharingSnapShot = async () => {
-		try {
-			const localUri = await captureRef(imageRef);
-			if (localUri) {
-				await MediaLibrary.saveToLibraryAsync(localUri);
-				Sharing.shareAsync(localUri);
-				setPicture(undefined);
-			}
-		} catch (e) {
-			console.log(e);
-		}
-	};
+  const returnCamera = () => {
+    setPicture(undefined);
+  };
 
+  const onSaveImage = async () => {
+    try {
+      if (camera) {
+        const image = await camera.takePictureAsync();
+        setPicture(image!.uri);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
-	const returnCamera = () => {
-		setPicture(undefined);
-	};
+  useEffect(() => {
+    (async () => {
+      const response = await axios.get(
+        `${API_ENDPOINT}/api/area-spots/${id}/contents`
+      );
+      setArContents(response.data[0]);
+    })();
+  }, []);
 
-	const onSaveImage = async () => {
-		try {
-			if (camera) {
-				const image = await camera.takePictureAsync();
-				setPicture(image!.uri);
-			}
-		} catch (e) {
-			console.log(e);
-		}
-	};
+  if (hasPermission === null) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text>Requesting permissions...</Text>
+      </View>
+    );
+  }
 
-	useEffect(() => {
-		(async () => {
-			const response = await axios.get(
-				`http://192.168.3.34:3000/api/area-spots/${id}/contents`
-			);
-			setArContents(response.data[0]);
-		})();
-	}, []);
+  if (hasPermission === false) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text>No access to camera or location</Text>
+      </View>
+    );
+  }
 
+  if (arContents === undefined) {
+    return (
+      <View>
+        <Text>Loading</Text>
+      </View>
+    );
+  }
 
-	if (hasPermission === null) {
-		return (
-			<View className="flex-1 justify-center items-center">
-				<Text>Requesting permissions...</Text>
-			</View>
-		);
-	}
-
-	if (hasPermission === false) {
-		return (
-			<View className="flex-1 justify-center items-center">
-				<Text>No access to camera or location</Text>
-			</View>
-		);
-	}
-
-	if (arContents === undefined) {
-		return (
-			<View>
-				<Text>Loading</Text>
-			</View>
-		);
-	}
-
-	
   return (
     <View className="flex-1 relative">
       {!picture ? (
@@ -165,7 +162,7 @@ export default function NativeWindAROverlay() {
             </CameraView>
           </View>
           <View className="absolute top-30 left-0 right-0 bottom-0 justify-center items-center ">
-           	<TakePhotoButton onSaveImage={onSaveImage} />
+            <TakePhotoButton onSaveImage={onSaveImage} />
           </View>
         </>
       ) : (
@@ -196,15 +193,14 @@ export default function NativeWindAROverlay() {
             </View>
           </View>
           <View className="absolute top-30 left-0 right-0 bottom-0 justify-center items-center ">
-          	<PictureButton
-								onSaveSnapShot={onSaveSnapShot}
-								onSharingSnapShot={onSharingSnapShot}
-								returnCamera={returnCamera}
-							/>
+            <PictureButton
+              onSaveSnapShot={onSaveSnapShot}
+              onSharingSnapShot={onSharingSnapShot}
+              returnCamera={returnCamera}
+            />
           </View>
         </>
       )}
     </View>
   );
-
 }

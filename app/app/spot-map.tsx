@@ -20,6 +20,7 @@ import {
   useFonts,
   SawarabiMincho_400Regular,
 } from "@expo-google-fonts/sawarabi-mincho";
+import API_ENDPOINT from "@env";
 
 export default function SpotMapScreen() {
   const { id, name, lat, lng } = useLocalSearchParams();
@@ -49,7 +50,7 @@ export default function SpotMapScreen() {
 
       const response = await axios.get(
         // `http://192.168.2.110:3000/api/area-spots/${id}`
-        `http://localhost:3000/api/area-spots/${id}`
+        `${API_ENDPOINT}/api/area-spots/${id}`
       );
       setSpotContents(response.data);
     })();

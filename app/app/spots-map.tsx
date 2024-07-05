@@ -6,6 +6,7 @@ import axios from "axios";
 import { GeofencingEventType, LocationSubscription } from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import * as Notifications from "expo-notifications";
+import API_ENDPOINT from "@env";
 
 interface Spot {
   spot_id: number;
@@ -99,7 +100,7 @@ export default function SpotsMapScreen() {
       });
       const response = await axios.get(
         // `http://192.168.2.110:3000/api/area-spots?lat=${location.coords.latitude}&lng=${location.coords.longitude}&radius=50000`
-        `http://localhost:3000/api/area-spots?lat=${location.coords.latitude}&lng=${location.coords.longitude}&radius=500`
+        `${API_ENDPOINT}/api/area-spots?lat=${location.coords.latitude}&lng=${location.coords.longitude}&radius=500`
       );
       const spotData = response.data as Spot[];
       setSpots(spotData);
