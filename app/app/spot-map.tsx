@@ -21,6 +21,7 @@ import {
   SawarabiMincho_400Regular,
 } from "@expo-google-fonts/sawarabi-mincho";
 import { API_ENDPOINT } from "@env";
+import LinkButton from "@/components/LinkButton";
 
 export default function SpotMapScreen() {
   const { id, name, lat, lng } = useLocalSearchParams();
@@ -98,6 +99,10 @@ export default function SpotMapScreen() {
           </>
         ) : null}
         {/* ボタン追従仕様に変更予定 */}
+
+        <View className="absolute top-5 left-30 right-0 bottom-0 items-center ">
+          <LinkButton link="/spots-map" iconName="map" size={30} />
+        </View>
         <View
           style={{
             position: "absolute",

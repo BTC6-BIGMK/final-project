@@ -11,6 +11,7 @@ import * as Sharing from "expo-sharing";
 import PictureButton from "@/components/PictureButton";
 import TakePhotoButton from "@/components/TakePhotoButton";
 import { API_ENDPOINT } from "@env";
+import LinkButton from "@/components/LinkButton";
 
 const THRESHOLD_DISTANCE = 1000; // メートル単位
 const CAMERA_FOV = 60; // カメラの視野角（度）
@@ -163,6 +164,9 @@ export default function NativeWindAROverlay() {
           </View>
           <View className="absolute top-30 left-0 right-0 bottom-0 justify-center items-center ">
             <TakePhotoButton onSaveImage={onSaveImage} />
+          </View>
+          <View className="absolute top-5 left-30 right-0 bottom-0 items-center ">
+            <LinkButton link="/spots-map" iconName="map" size={30} />
           </View>
         </>
       ) : (
