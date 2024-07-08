@@ -14,7 +14,6 @@ import * as Location from "expo-location";
 import Animated from "react-native-reanimated";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import AppLoading from "expo-app-loading";
 import axios from "axios";
 import {
   useFonts,
@@ -66,7 +65,7 @@ export default function SpotMapScreen() {
   });
 
   if (!fontsLoaded || spotContents === undefined) {
-    return <AppLoading />;
+    return <Text>Loading...</Text>;
   }
 
   return (
