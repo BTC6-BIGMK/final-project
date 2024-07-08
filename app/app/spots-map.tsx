@@ -148,7 +148,6 @@ export default function SpotsMapScreen() {
         <MapView
           className="flex-1 h-screen"
           showsUserLocation={true}
-          followsUserLocation={true}
           initialRegion={{
             latitude: initialLocation!!.lat,
             longitude: initialLocation!!.lng,
