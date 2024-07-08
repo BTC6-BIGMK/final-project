@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, Image, Text } from "react-native";
+import { View, Image, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { CameraView } from "expo-camera";
 import { useAR } from "@/hooks/useAR";
 import axios from "axios";
@@ -113,8 +113,8 @@ export default function NativeWindAROverlay() {
 
   if (arContents === undefined) {
     return (
-      <View>
-        <Text>Loading</Text>
+      <View style={[styles.container, styles.horizontal]}>
+        <ActivityIndicator size="large" />
       </View>
     );
   }
@@ -210,3 +210,15 @@ export default function NativeWindAROverlay() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
+  },
+});

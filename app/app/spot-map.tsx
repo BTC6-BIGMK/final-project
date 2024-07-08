@@ -8,6 +8,8 @@ import {
   ImageBackground,
   ScrollView,
   Pressable,
+  ActivityIndicator,
+  StyleSheet,
 } from "react-native";
 import { Link, useLocalSearchParams } from "expo-router";
 import * as Location from "expo-location";
@@ -40,6 +42,8 @@ export default function SpotMapScreen() {
   }>();
   console.log("spot", id, name, lat, lng);
 
+  const [arButtonPosition, setArButtonPosition] = useState<number>(52);
+
   useEffect(() => {
     (async () => {
       const location = await Location.getCurrentPositionAsync({});
@@ -66,7 +70,12 @@ export default function SpotMapScreen() {
   });
 
   if (!fontsLoaded || spotContents === undefined) {
-    return <AppLoading />;
+    return (
+      // https://reactnative.dev/docs/activityindicator
+      <View style={[styles.container, styles.horizontal]}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   return (
@@ -77,9 +86,8 @@ export default function SpotMapScreen() {
             <MapView
               className="flex-1 h-screen"
               showsUserLocation={true}
-              followsUserLocation={true}
               initialRegion={{
-                latitude: location!.lat - 0.001,
+                latitude: location!.lat - 0.002,
                 longitude: location!.lng,
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA,
@@ -106,7 +114,7 @@ export default function SpotMapScreen() {
         <View
           style={{
             position: "absolute",
-            top: "40%",
+            bottom: `${arButtonPosition}%`,
             right: "4%",
             zIndex: 1,
           }}
@@ -133,7 +141,7 @@ export default function SpotMapScreen() {
         <BottomSheet
           index={1}
           ref={bottomSheetRef}
-          snapPoints={["3%", "50%"]}
+          snapPoints={["5%", "50%"]}
           handleIndicatorStyle={{
             backgroundColor: "red",
             width: 100,
@@ -155,6 +163,10 @@ export default function SpotMapScreen() {
               </View>
             );
           }}
+          onChange={(index) => {
+            index === 1 ? setArButtonPosition(52) : setArButtonPosition(7);
+          }}
+          style={{ zIndex: 4 }}
         >
           <ImageBackground
             source={require("@/assets/images/washi.jpeg")}
@@ -178,7 +190,7 @@ export default function SpotMapScreen() {
                 {/* {name} */}
                 {spotContents!.name}
               </Text>
-              <ScrollView style={{ height: "50%" }}>
+              <ScrollView style={{ height: "35%", marginBottom: "7%" }}>
                 <Text
                   style={{
                     fontFamily: "SawarabiMincho_400Regular",
@@ -196,3 +208,15 @@ export default function SpotMapScreen() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
+  },
+});
